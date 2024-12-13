@@ -124,12 +124,12 @@ class MyComponent extends StreamlitComponentBase<BaseState> {
     return annotations;
   }
 
-  private updateState = (value: any, callback: any, strip: boolean): void => {
+  private updateState = (value: any, callback: any, strip_whitespace: boolean): void => {
     const text = this.props.args["text"];
     let trimmedValue = value;
 
     // Trim leading/trailing spaces by adjusting start/end indices
-    if (strip) {
+    if (strip_whitespace) {
         trimmedValue = value.map((annotation: any) => {
         let {start, end} = annotation;
 
