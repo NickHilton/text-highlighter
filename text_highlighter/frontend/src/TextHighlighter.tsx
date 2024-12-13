@@ -30,6 +30,7 @@ class MyComponent extends StreamlitComponentBase<BaseState> {
     const selected_label = this.props.args["selected_label"]
     const show_label_selector = this.props.args["show_label_selector"]
     const text_height = this.props.args["text_height"]
+    const strip_whitespace = this.props.args["strip_whitespace"]
 
     // Streamlit sends us a theme object via props that we can use to ensure
     // that our component has visuals that match the active theme in a
@@ -79,7 +80,7 @@ class MyComponent extends StreamlitComponentBase<BaseState> {
               }}
               content={text}
               value={state.value}
-              onChange={(value: any) => this.updateState(value, setState)}
+              onChange={(value: any) => this.updateState(value, setState, strip_whitespace)}
               getSpan={span => ({
                 ...span,
                 tag: state.tag,
@@ -123,10 +124,32 @@ class MyComponent extends StreamlitComponentBase<BaseState> {
     return annotations;
   }
 
-  private updateState = (value: any, callback: any): void => {
-    value = this.mergeAnnotations(value);
-    callback({ value });
-    Streamlit.setComponentValue(value);
+  private updateState = (value: any, callback: any, strip: boolean): void => {
+    const text = this.props.args["text"];
+    let trimmedValue = value;
+
+    // Trim leading/trailing spaces by adjusting start/end indices
+    if (strip) {
+        trimmedValue = value.map((annotation: any) => {
+        let {start, end} = annotation;
+
+        // Trim leading spaces
+        while (start < end && text[start] === ' ') {
+          start += 1;
+        }
+
+        // Trim trailing spaces
+        while (end > start && text[end - 1] === ' ') {
+          end -= 1;
+        }
+
+        return {...annotation, start, end};
+      });
+    }
+
+    const mergedValue = this.mergeAnnotations(trimmedValue);
+    callback({ value: mergedValue });
+    Streamlit.setComponentValue(mergedValue);
   }
 
   /** Focus handler for our "Click Me!" button. */

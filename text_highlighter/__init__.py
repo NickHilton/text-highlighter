@@ -52,6 +52,7 @@ def text_highlighter(
     key: Optional[str] = None,
     show_label_selector: bool = True,
     text_height: Optional[int] = None,
+    strip_whitespace: bool = False,
 ):
     """A text highlighter component.
 
@@ -71,6 +72,8 @@ def text_highlighter(
         Whether to show the label selector
     text_height : Optional[int]
         The height of the text area in pixels
+    strip_whitespace : bool
+        Whether to strip whitespace from any annotations
 
     Examples
     --------
@@ -107,6 +110,7 @@ def text_highlighter(
         selected_label=selected_label,
         show_label_selector=show_label_selector,
         text_height=text_height,
+        strip_whitespace=strip_whitespace,
     )
 
     class ComponentResult(list):  # type: ignore
